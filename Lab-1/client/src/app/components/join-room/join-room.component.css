@@ -1,0 +1,72 @@
+.join-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #249cb6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.join-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-control {
+  width: 100%;
+  height: 54px;
+  background-color: #ffffff;
+  border: 1px solid #c7d2d6;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-size: 18px;
+  color: #333333;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #f7b731;
+  box-shadow: 0 0 0 2px rgba(247, 183, 49, 0.25);
+}
+
+.btn-join {
+  width: 100%;
+  height: 52px;
+  background-color: #f7b731;
+  color: #333333;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-join:hover {
+  background-color: #eaab25;
+}
+
+.btn-join:active {
+  transform: scale(0.99);
+}

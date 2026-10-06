@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Звіт з лабораторної роботи №1 | Вівдиченко М. С. ІП-34</title>
+  <style>
+    :root {
+      --primary: #1b657d;
+      --primary-light: #e8f4f8;
+      --primary-dark: #124556;
+      --accent: #e59819;
+      --accent-light: #fef5e7;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --success: #15803d;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.65;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Floating Toolbar */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .toolbar-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* Report Content */
+    .content {
+      padding: 3rem;
+    }
+
+    /* Academic Header */
+    .doc-header {
+      text-align: center;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .doc-inst {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary-dark);
+      margin-bottom: 0.3rem;
+    }
+
+    .doc-subinst {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .doc-title-badge {
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .doc-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .meta-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .meta-value.accent {
+      color: var(--primary);
+    }
+
+    /* Sections */
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    h2 .sec-num {
+      color: var(--accent);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 1.5rem 0 0.75rem 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Info Callouts */
+    .callout {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+      font-size: 0.95rem;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.3rem;
+    }
+
+    .callout-accent {
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+    }
+
+    .callout-accent .callout-title {
+      color: #b45309;
+    }
+
+    /* Comparison Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Code Block */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 1rem 0;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Screenshot Figures */
+    .figure-container {
+      margin: 2rem 0;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      page-break-inside: avoid;
+    }
+
+    .figure-img-wrapper {
+      position: relative;
+      cursor: zoom-in;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #000;
+    }
+
+    .figure-img-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.2s ease;
+    }
+
+    .figure-img-wrapper:hover img {
+      opacity: 0.95;
+    }
+
+    .figure-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: rgba(18, 69, 86, 0.85);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .figure-caption {
+      margin-top: 0.85rem;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .figure-caption strong {
+      color: var(--primary-dark);
+    }
+
+    .figure-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Lightbox Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 2rem;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-caption {
+      color: #ffffff;
+      margin-top: 1rem;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+        color: #000;
+      }
+
+      .container {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+      }
+
+      .toolbar, .modal {
+        display: none !important;
+      }
+
+      .content {
+        padding: 0;
+      }
+
+      .figure-container {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin: 1.5rem 0;
+      }
+
+      .figure-img-wrapper {
+        cursor: default;
+      }
+
+      pre {
+        background: #f1f5f9;
+        color: #000;
+        border: 1px solid #cbd5e1;
+      }
+
+      code {
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Action Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-title">Звіт з Лабораторної роботи №1 | Варіант 9</div>
+      <div class="toolbar-actions">
+        <button class="btn btn-secondary" onclick="window.print()">
+          🖨️ Роздрукувати / PDF
+        </button>
+        <button class="btn btn-primary" onclick="copyReportText()">
+          📋 Копіювати текст
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Report Body -->
+    <div class="content" id="report-text">
+      <!-- Title Block -->
+      <div class="doc-header">
+        <div class="doc-inst">Національний технічний університет України</div>
+        <div class="doc-inst">«Київський політехнічний інститут імені Ігоря Сікорського»</div>
+        <div class="doc-subinst">Факультет інформатики та обчислювальної техніки • Кафедра інформатики та програмної інженерії</div>
+        
+        <div class="doc-title-badge">Дисципліна: «Веб-технології»</div>
+        <h1 class="doc-title">Лабораторна робота №1</h1>
+        <div class="doc-subtitle">Дослідження технології WebSocket та розробка веб-чату в реальному часі на базі NestJS та Angular</div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Студент:</span>
+            <span class="meta-value">Вівдиченко Максим Сергійович</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Група:</span>
+            <span class="meta-value">ІП-34</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Індивідуальний варіант:</span>
+            <span class="meta-value accent">Варіант №9</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Період розсилки:</span>
+            <span class="meta-value">10 + 9 = 19 секунд</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Мета роботи -->
+      <section>
+        <h2><span class="sec-num">1.</span> Мета роботи та стек технологій</h2>
+        <p>
+          <strong>Мета роботи:</strong> Дослідити протокол повнодуплексного обміну даними в реальному часі WebSocket та можливості бібліотеки Socket.IO. Ознайомитися з архітектурою створення real-time серверів на базі фреймворку <strong>NestJS</strong> та клієнтських веб-застосунків на <strong>Angular 19</strong>. Реалізувати повнофункціональний веб-чат з підтримкою кімнат (rooms), обміну повідомленнями, моніторингу активних користувачів та періодичного розсилання службових сповіщень відповідно до індивідуального завдання.
+        </p>
+
+        <h3>Використаний стек технологій:</h3>
+        <ul>
+          <li><strong>Серверна платформа:</strong> Node.js (v22), NestJS 11, TypeScript.</li>
+          <li><strong>Real-time комунікація:</strong> <code>@nestjs/websockets</code>, <code>@nestjs/platform-socket.io</code>, Socket.IO Server (v4.8).</li>
+          <li><strong>Клієнтський інтерфейс:</strong> Angular (Standalone Components, Signals, Reactive Forms), CSS Flexbox/Grid, <code>socket.io-client</code>.</li>
+          <li><strong>Тестування:</strong> Jest, E2E WebSocket тест-сьюти.</li>
+          <li><strong>Контейнеризація:</strong> Docker, Docker Compose (багатоетапні збірки, node:22-alpine).</li>
+        </ul>
+      </section>
+
+      <!-- Section: Теоретичні відомості -->
+      <section>
+        <h2><span class="sec-num">2.</span> Зміст та теоретичні відомості</h2>
+        <p>
+          Традиційний протокол HTTP/1.1 функціонує за моделлю «запит-відповідь» (request-response). Для систем реального часу (онлайн-чати, трекінг котирувань, ігри) такий підхід призводить до великої затримки (latency) та надлишкового навантаження через постійне пересилання HTTP-заголовків. Протокол <strong>WebSocket</strong> (RFC 6455) забезпечує встановлення постійного, двонаправленого (full-duplex) TCP-з'єднання між клієнтом і сервером після одноразового HTTP Upgrade Handshake.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Характеристика</th>
+              <th>HTTP Polling / Long-Polling</th>
+              <th>WebSocket / Socket.IO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Модель зв'язку</strong></td>
+              <td>Однонаправлена (клієнт запитує &rarr; сервер відповідає)</td>
+              <td>Повнодуплексна (full-duplex), рівноправний обмін</td>
+            </tr>
+            <tr>
+              <td><strong>Накладні витрати</strong></td>
+              <td>Високі (HTTP заголовки cookie, auth у кожному запиті)</td>
+              <td>Мінімальні (фрейми TCP розміром від 2 байт)</td>
+            </tr>
+            <tr>
+              <td><strong>Затримка (Latency)</strong></td>
+              <td>Значна (залежить від інтервалу опитування)</td>
+              <td>Мілісекундна (дані передаються миттєво)</td>
+            </tr>
+            <tr>
+              <td><strong>Кімнати та простори</strong></td>
+              <td>Необхідна власна ручна реалізація маршрутизації</td>
+              <td>Вбудована підтримка Rooms та Namespaces в Socket.IO</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-title">Індивідуальне завдання (Варіант 9):</div>
+          Сервер повинен кожні <code>T = 10 + N</code> секунд (для варіанту 9: <code>10 + 9 = 19</code> секунд) автоматично відправляти у всі активні кімнати повідомлення наступного змісту:
+          <br>
+          <em>«Автоматичне повідомлення від ст. Вівдиченко Максим Сергійович гр. ІП-34 Варіант 9 HH:mm:ss»</em>.
+        </div>
+      </section>
+
+      <!-- Section: Хід роботи -->
+      <section>
+        <h2><span class="sec-num">3.</span> Хід виконання роботи</h2>
+
+        <h3>3.1. Архітектура серверної частини (NestJS)</h3>
+        <p>
+          Серверну частину організовано за модульним принципом згідно з офіційними рекомендаціями NestJS:
+        </p>
+        <ul>
+          <li><code>ChatGateway</code> — шлюз WebSocket, що декларує прослуховування подій <code>join</code>, <code>message</code>, <code>leave</code>, а також перехоплює життєвий цикл з'єднань <code>handleConnection</code> та <code>handleDisconnect</code>.</li>
+          <li><code>ChatService</code> — інкапсулює управління станом користувачів, мапінг сокетів та кімнат.</li>
+          <li><code>AutoBroadcastService</code> — сервіс-шедулер фонової розсилки повідомлень, що автоматично зупиняє таймер при знищенні модуля (<code>OnModuleDestroy</code>), запобігаючи витокам пам'яті.</li>
+          <li><code>student.config.ts</code> — централізований конфігураційний файл, що визначає ПІБ студента, групу та номер варіанту.</li>
+        </ul>
+
+        <h3>3.2. Рефакторинг та дотримання принципів чистого коду (SOLID, DRY)</h3>
+        <p>
+          В процесі розробки було проведено глибокий рефакторинг коду для забезпечення принципів <strong>SRP (Single Responsibility Principle)</strong> та <strong>DRY (Don't Repeat Yourself)</strong>:
+        </p>
+        <ol>
+          <li><strong>Виділення утиліти часу (<code>TimeUtils</code>):</strong> Усунено дублювання форматування часу між різними модулями. Створено єдиний статичний клас <code>server/src/common/time.util.ts</code>, який форматує час у 24-годинному форматі <code>HH:mm:ss</code>.</li>
+          <li><strong>Виділення генератора ідентифікаторів (<code>IdUtils</code>):</strong> Логіку створення колізійно-безпечних ID повідомлень винесено в окремий утилітарний клас <code>server/src/common/id.util.ts</code>.</li>
+          <li><strong>Оптимізація шлюзу:</strong> Створено повторно використовувані допоміжні методи <code>createAdminMessage</code>, <code>sendAdminMessage</code>, <code>broadcastAdminMessageToRoom</code> та <code>handleUserDeparture</code>, що виключило повторення коду при обробці подій входу, виходу та раптового розриву з'єднання.</li>
+        </ol>
+
+        <pre><code>// server/src/common/time.util.ts - єдина точка форматування часу
+export class TimeUtils {
+  static formatTime(date: Date = new Date()): string {
+    return date.toTimeString().split(' ')[0]; // 'HH:mm:ss'
+  }
+}
+
+// server/src/chat/auto-broadcast.service.ts - періодична розсилка (Варіант 9: 19 сек)
+const intervalSeconds = 10 + (defaultStudentConfig.variant || 1); // 10 + 9 = 19 с
+this.intervalTimer = setInterval(() => {
+  this.sendAutoMessage();
+}, intervalSeconds * 1000);</code></pre>
+
+        <h3>3.3. Розробка клієнтської частини (Angular)</h3>
+        <p>
+          Клієнтський застосунок реалізовано з використанням архітектури Standalone-компонентів Angular:
+        </p>
+        <ul>
+          <li><strong><code>SocketService</code>:</strong> Singleton-сервіс, що інкапсулює екземпляр <code>Socket</code> бібліотеки <code>socket.io-client</code>, транслює вхідні сокет-події у реактивні сигнали (Angular Signals) та забезпечує метод повторного підключення.</li>
+          <li><strong><code>JoinRoomComponent</code>:</strong> Компонент автентифікації та вибору кімнати з валідацією полів форми.</li>
+          <li><strong><code>ChatRoomComponent</code>:</strong> Робочий простір чату. Містить сайдбар активних користувачів, стрічку повідомлень з візуальним розмежуванням системних сповіщень, автоматичної розсилки (помаранчевий банер) та користувацьких реплік (зелені блоки із часовими мітками), а також кнопку безпечного виходу.</li>
+          <li><strong>Розділення файлів:</strong> Відповідно до вимог production-ready архітектури кожен компонент розділено на три окремі файли: <code>*.ts</code> (логіка), <code>*.html</code> (семантичний шаблон) та <code>*.css</code> (стилізація).</li>
+        </ul>
+
+        <h3>3.4. Автоматизоване тестування та контейнеризація</h3>
+        <p>
+          Створено комплекс E2E тестів (Jest), що перевіряють повноцінний життєвий цикл роботи системи: успішне з'єднання двох клієнтів через сокети, вхід в одну кімнату, ізоляцію повідомлень між різними кімнатами, надходження періодичних розсилок та коректне оновлення списку користувачів при відключенні. Усі 20 тестів проходять успішно.
+        </p>
+        <p>
+          Створено <code>docker-compose.yml</code> для запуску бекенду (порт 3000) та фронтенду (порт 4200) в ізольованих Docker-контейнерах за одну команду <code>docker compose up --build</code>.
+        </p>
+      </section>
+
+      <!-- Section: Отримані результати -->
+      <section>
+        <h2><span class="sec-num">4.</span> Отримані результати та демонстрація роботи</h2>
+        <p>
+          Для підтвердження повної працездатності застосунку було проведено наскрізне тестування за допомогою інтелектуального браузерного агента. Нижче наведено скріншоти ключових етапів роботи веб-чату.
+        </p>
+
+        <!-- Figure 1 -->
+        <div class="figure-container">
+          <div class="figure-img-wrapper" onclick="openLightbox('report_assets/01_join_screen.png', 'Рис. 1. Форма входу в кімнату (Join Room)')">
+            <span class="figure-badge">Етап 1</span>
+            <img src="report_assets/01_join_screen.png" alt="Екран входу в чат-кімнату">
+          </div>
+          <div class="figure-caption">
+            <strong>Рис. 1.</strong> Інтерфейс авторизації та входу в кімнату (<code>JoinRoomComponent</code>).
+            <div class="figure-desc">
+              Користувач вводить нікнейм <code>user1</code> та ідентифікатор кімнати <code>room1</code>. Реалізовано валідацію обов'язковості заповнення полів та стилізовану кнопку «Приєднатись».
+            </div>
+          </div>
+        </div>
+
+        <!-- Figure 2 -->
+        <div class="figure-container">
+          <div class="figure-img-wrapper" onclick="openLightbox('report_assets/02_chatroom_initial.png', 'Рис. 2. Початковий стан робочої області чату')">
+            <span class="figure-badge">Етап 2</span>
+            <img src="report_assets/02_chatroom_initial.png" alt="Початковий стан чату">
+          </div>
+          <div class="figure-caption">
+            <strong>Рис. 2.</strong> Робоча область чату (<code>ChatRoomComponent</code>) одразу після приєднання.
+            <div class="figure-desc">
+              Сервер обробив подію <code>join</code>, приєднав сокет до кімнати <code>room1</code> та надіслав вітальне повідомлення: <code>Admin 00:44:17 Welcome, user1!</code>. У лівій панелі оновлено перелік активних учасників кімнати.
+            </div>
+          </div>
+        </div>
+
+        <!-- Figure 3 -->
+        <div class="figure-container">
+          <div class="figure-img-wrapper" onclick="openLightbox('report_assets/04_periodic_broadcast.png', 'Рис. 3. Автоматична розсилка за Варіантом 9 (19 секунд) та відправка повідомлень')">
+            <span class="figure-badge">Етап 3 • Варіант 9</span>
+            <img src="report_assets/04_periodic_broadcast.png" alt="Періодична розсилка та чат">
+          </div>
+          <div class="figure-caption">
+            <strong>Рис. 3.</strong> Демонстрація виконання індивідуального завдання Варіанту 9 та обміну повідомленнями.
+            <div class="figure-desc">
+              Зафіксовано надходження трьох послідовних автоматичних розсилок від <code>AutoBroadcastService</code> з точним інтервалом <strong>19 секунд</strong>:
+              <br>
+              • <code>00:44:26</code> &rarr; <em>«Автоматичне повідомлення від ст. Вівдиченко Максим Сергійович гр. ІП-34 Варіант 9 00:44:26»</em><br>
+              • <code>00:44:45</code> (+19 с) &rarr; наступне системне повідомлення з актуальним часом.<br>
+              • <code>00:45:04</code> (+19 с) &rarr; наступне системне повідомлення.<br>
+              Також продемонстровано користувацьке повідомлення від <code>user1</code>: <em>«Pryvit usim! Tse testove povidomlennya.»</em> (зелений блок).
+            </div>
+          </div>
+        </div>
+
+        <!-- Figure 4 -->
+        <div class="figure-container">
+          <div class="figure-img-wrapper" onclick="openLightbox('report_assets/06_user2_left.png', 'Рис. 4. Багатокористувацька взаємодія та події присутності (Presence)')">
+            <span class="figure-badge">Етап 4 • Multi-user</span>
+            <img src="report_assets/06_user2_left.png" alt="Підключення та вихід другого користувача">
+          </div>
+          <div class="figure-caption">
+            <strong>Рис. 4.</strong> Багатокористувацька взаємодія: підключення та вихід другого учасника (<code>user2</code>).
+            <div class="figure-desc">
+              Система в реальному часі сповіщає кімнату про вхід нового користувача (<code>Admin 01:30:59 user2 has joined!</code>) та про його відключення (<code>Admin 01:31:31 user2 has left!</code>). При цьому автоматична розсилка Варіанту 9 продовжує стабільно транслюватися всім присутнім учасникам.
+            </div>
+          </div>
+        </div>
+
+        <!-- Figure 5 -->
+        <div class="figure-container">
+          <div class="figure-img-wrapper" onclick="openLightbox('report_assets/07_leave_room.png', 'Рис. 5. Завершення сесії та вихід з кімнати')">
+            <span class="figure-badge">Етап 5</span>
+            <img src="report_assets/07_leave_room.png" alt="Вихід з кімнати">
+          </div>
+          <div class="figure-caption">
+            <strong>Рис. 5.</strong> Завершення сеансу та повернення до початкового екрана вибору кімнати.
+            <div class="figure-desc">
+              При натисканні кнопки «← Вийти з кімнати» клієнт надсилає подію <code>leave</code>, сокет відписується від кімнати на сервері, а Angular за допомогою реактивних сигналів миттєво перемикає інтерфейс назад на форму підключення.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Висновки -->
+      <section>
+        <h2><span class="sec-num">5.</span> Висновки</h2>
+        <p>
+          Під час виконання лабораторної роботи №1 було досягнуто наступних результатів:
+        </p>
+        <ol>
+          <li>Досліджено теоретичні основи протоколу <strong>WebSocket</strong> та його відмінності від класичної моделі HTTP. Доведено переваги WebSocket для застосунків реального часу завдяки мінімальному overhead та низькій затримці передачі даних.</li>
+          <li>Розроблено високопродуктивний бекенд на фреймворку <strong>NestJS</strong> з використанням модуля <code>@nestjs/websockets</code> та бібліотеки <strong>Socket.IO</strong>. Реалізовано надійне керування з'єднаннями, кімнатами та доставкою повідомлень.</li>
+          <li>Успішно реалізовано індивідуальне завдання за <strong>Варіантом №9</strong>: сервіс <code>AutoBroadcastService</code> здійснює фонову розсилку персоналізованого службового сповіщення кожні <strong>19 секунд</strong> ($10 + 9$) з відміткою часу у всі активні кімнати.</li>
+          <li>Проведено рефакторинг за принципами <strong>SOLID (SRP)</strong> та <strong>DRY</strong>: виділено окремі утиліти <code>TimeUtils</code> та <code>IdUtils</code>, оптимізовано методи розсилки системних сповіщень.</li>
+          <li>Розроблено клієнтський застосунок на <strong>Angular</strong> з реактивним управлінням станом на базі Signals, модульною структурою компонентів та адаптивним дизайном.</li>
+          <li>Створено комплект наскрізних E2E тестів Jest, що гарантують надійність роботи сокет-шлюзу. Застосунок успішно упаковано в контейнери за допомогою <strong>Docker Compose</strong>.</li>
+        </ol>
+      </section>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div class="modal" id="lightbox" onclick="closeLightbox()">
+    <button class="modal-close" onclick="closeLightbox()">&times;</button>
+    <img class="modal-content" id="lightbox-img" src="" alt="Full view" onclick="event.stopPropagation()">
+    <div class="modal-caption" id="lightbox-caption"></div>
+  </div>
+
+  <script>
+    function openLightbox(src, caption) {
+      const modal = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      const cap = document.getElementById('lightbox-caption');
+      img.src = src;
+      cap.textContent = caption;
+      modal.classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    function copyReportText() {
+      const el = document.getElementById('report-text');
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Текст звіту успішно скопійовано в буфер обміну! Ви можете вставити його в Word або Google Docs.');
+      }).catch(err => {
+        alert('Не вдалося скопіювати автоматично. Будь ласка, виділіть текст сторінки вручну.');
+      });
+    }
+  </script>
+</body>
+</html>

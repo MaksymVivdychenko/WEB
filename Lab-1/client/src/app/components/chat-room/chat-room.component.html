@@ -1,0 +1,77 @@
+<div class="chat-layout">
+  <!-- Left Sidebar (Page 3, 4, 5 of manual) -->
+  <aside class="sidebar">
+    <!-- Room & Username Info Card -->
+    <div class="info-card">
+      <div class="info-row">
+        <strong>Room:</strong> {{ currentRoom() }}
+      </div>
+      <div class="info-row">
+        <strong>Username:</strong> {{ currentUser() }}
+      </div>
+    </div>
+
+    <!-- Users in Room Card -->
+    <div class="users-card">
+      <div class="users-header">Users in the chatroom:</div>
+      <ul class="users-list">
+        @for (user of roomUsers(); track user) {
+          <li class="user-item">{{ user }}</li>
+        }
+      </ul>
+    </div>
+
+    <!-- Leave Room Action -->
+    <div class="sidebar-actions">
+      <button type="button" class="btn-leave" (click)="onLeave()">
+        ← Вийти з кімнати
+      </button>
+    </div>
+  </aside>
+
+  <!-- Right Main Chat Area -->
+  <main class="chat-main">
+    <!-- Message Feed -->
+    <div class="messages-container" #messagesContainer>
+      @for (msg of messages(); track msg.id) {
+        <div
+          class="message-block"
+          [ngClass]="{
+            'admin-msg': msg.type === 'admin',
+            'user-msg': msg.type === 'user',
+            'auto-msg': msg.type === 'auto'
+          }"
+        >
+          @if (msg.type === 'auto') {
+            <div class="msg-text">{{ msg.text }}</div>
+          } @else {
+            <div class="msg-header">
+              <span class="sender-name">{{ msg.sender }}</span>
+              <span class="msg-time">{{ msg.time }}</span>
+            </div>
+            <div class="msg-text">{{ msg.text }}</div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Bottom Input Bar -->
+    <footer class="chat-input-bar">
+      <form (ngSubmit)="onSendMessage()" class="input-form">
+        <input
+          type="text"
+          id="messageInput"
+          name="messageText"
+          [(ngModel)]="messageText"
+          placeholder="Message"
+          class="message-input"
+          autocomplete="off"
+          #msgInput
+        />
+        <button type="submit" id="sendBtn" class="btn-send">
+          Send
+        </button>
+      </form>
+    </footer>
+  </main>
+</div>

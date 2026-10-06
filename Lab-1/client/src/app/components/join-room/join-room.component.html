@@ -1,0 +1,35 @@
+<div class="join-container">
+  <div class="join-card">
+    <form (ngSubmit)="onJoin()" class="join-form">
+      <div class="form-group">
+        <input
+          type="text"
+          id="usernameInput"
+          name="username"
+          [(ngModel)]="username"
+          placeholder="Username"
+          class="form-control"
+          required
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          id="roomInput"
+          name="room"
+          [(ngModel)]="room"
+          placeholder="Room"
+          class="form-control"
+          required
+          autocomplete="off"
+        />
+      </div>
+
+      <button type="submit" id="joinBtn" class="btn-join">
+        Приєднатись
+      </button>
+    </form>
+  </div>
+</div>
