@@ -1,0 +1,5 @@
+node_modules/
+dist/
+lab2.sqlite*
+.env
+LlmArtifacts/

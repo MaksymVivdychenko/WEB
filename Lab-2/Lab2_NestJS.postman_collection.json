@@ -1,0 +1,355 @@
+{
+  "info": {
+    "_postman_id": "lab2-nestjs-jwt-auth",
+    "name": "Lab 2 - NestJS JWT Auth & Role Authorization",
+    "description": "Complete test suite for Lab 2 (Web Basics): Registration, JWT authentication with student info payload, expiration (60+N), role-based authorization (USER and ADMIN) and SQLite persistence.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "userToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Register Regular User (USER role)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 Created (or 409 if already exists)', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    const json = pm.response.json();",
+              "    pm.test('Response contains created user info without password', function () {",
+              "        pm.expect(json).to.have.property('user');",
+              "        pm.expect(json.user.username).to.eql('student_user');",
+              "        pm.expect(json.user).to.not.have.property('password');",
+              "        pm.expect(json.user.roles).to.include('USER');",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"student_user\",\n  \"password\": \"UserPass123!\",\n  \"roles\": [\"USER\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "register"]
+        },
+        "description": "Registers a normal user with hashed password and USER role."
+      }
+    },
+    {
+      "name": "2. Register Admin User (ADMIN role)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 Created (or 409 if already exists)', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    const json = pm.response.json();",
+              "    pm.test('Response contains created admin info without password', function () {",
+              "        pm.expect(json).to.have.property('user');",
+              "        pm.expect(json.user.username).to.eql('admin_boss');",
+              "        pm.expect(json.user.roles).to.include('ADMIN');",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin_boss\",\n  \"password\": \"AdminSecret999!\",\n  \"roles\": [\"ADMIN\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "register"]
+        },
+        "description": "Registers an administrator with hashed password and ADMIN role."
+      }
+    },
+    {
+      "name": "3. Login as Regular User (Obtain JWT & Check Expiry)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.test('JWT token is returned', function () {",
+              "    pm.expect(json).to.have.property('token');",
+              "    pm.expect(json.token).to.be.a('string');",
+              "    pm.collectionVariables.set('userToken', json.token);",
+              "});",
+              "pm.test('Expiration is dynamically set to 60+N seconds', function () {",
+              "    pm.expect(json).to.have.property('expiresIn');",
+              "    pm.expect(json.expiresIn).to.be.at.least(60);",
+              "    pm.expect(json.studentInfo).to.have.property('variant');",
+              "    pm.expect(json.expiresIn).to.eql(60 + json.studentInfo.variant);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"student_user\",\n  \"password\": \"UserPass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
+        },
+        "description": "Logs in user, returns JWT and sets `userToken` variable."
+      }
+    },
+    {
+      "name": "4. Login as Admin User (Obtain Admin JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.test('Admin JWT token is returned', function () {",
+              "    pm.expect(json).to.have.property('token');",
+              "    pm.collectionVariables.set('adminToken', json.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin_boss\",\n  \"password\": \"AdminSecret999!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
+        },
+        "description": "Logs in admin, returns JWT and sets `adminToken` variable."
+      }
+    },
+    {
+      "name": "5. Basic Endpoint: GET Profile (All Authenticated Users)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.test('Returns authenticated user profile and token claims', function () {",
+              "    pm.expect(json).to.have.property('authenticatedUser');",
+              "    pm.expect(json.authenticatedUser.username).to.eql('student_user');",
+              "    pm.expect(json.authenticatedUser).to.have.property('student');",
+              "    pm.expect(json.authenticatedUser.student).to.have.property('lastName');",
+              "    pm.expect(json.authenticatedUser.student).to.have.property('initials');",
+              "    pm.expect(json.authenticatedUser.student).to.have.property('group');",
+              "    pm.expect(json.authenticatedUser.student).to.have.property('variant');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "profile"]
+        },
+        "description": "Accesses the basic authenticated endpoint using userToken."
+      }
+    },
+    {
+      "name": "6. Admin Endpoint: Access with USER role (Forbidden 403)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 403 Forbidden for non-admin user', function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.test('Response explains insufficient privileges', function () {",
+              "    pm.expect(json.message).to.include('Access denied');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Attempts to access admin endpoint with a regular USER token. Verifies 403 Forbidden."
+      }
+    },
+    {
+      "name": "7. Admin Endpoint: Access with ADMIN role (Success 200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK for Admin', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.test('Returns list of registered users for admin', function () {",
+              "    pm.expect(json).to.have.property('users');",
+              "    pm.expect(Array.isArray(json.users)).to.be.true;",
+              "    pm.expect(json.users.length).to.be.at.least(1);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["admin", "users"]
+        },
+        "description": "Accesses the admin endpoint with adminToken. Verifies 200 OK and user list."
+      }
+    },
+    {
+      "name": "8. Security Check: Access without Token (Unauthorized 401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 Unauthorized without token', function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "profile"]
+        },
+        "description": "Verifies that accessing protected endpoints without Bearer token results in 401 Unauthorized."
+      }
+    }
+  ]
+}

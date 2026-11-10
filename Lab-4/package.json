@@ -1,0 +1,28 @@
+{
+  "name": "lab-4-express-sqlite-crud",
+  "version": "1.0.0",
+  "description": "Lab-4: REST API на Node.js та Express. CRUD операції в базі даних (Варіант 9: автори та статті)",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "express",
+    "rest-api",
+    "sqlite",
+    "swagger",
+    "crud"
+  ],
+  "author": "Maksym Vivdychenko (ІП-34, Варіант 9)",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
